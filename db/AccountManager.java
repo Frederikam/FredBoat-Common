@@ -1,11 +1,9 @@
 package fredboat.common.db;
 
-import fredboat.FredBoat;
 import fredboat.common.db.entities.UConfig;
 import java.net.URI;
 import java.util.List;
 import javax.persistence.EntityManager;
-import net.dv8tion.jda.utils.ApplicationUtil;
 import org.dmfs.httpessentials.client.HttpRequestExecutor;
 import org.dmfs.httpessentials.httpurlconnection.HttpUrlConnectionExecutor;
 import org.dmfs.oauth2.client.BasicOAuth2AuthorizationProvider;
@@ -21,7 +19,7 @@ public class AccountManager {
     private static OAuth2Client oauth = null;
     private static HttpRequestExecutor executor = null;
     
-    public static void init(String secret) {
+    public static void init(String clientId, String secret) {
         executor = new HttpUrlConnectionExecutor();
 
         // Create OAuth2 provider
@@ -29,8 +27,6 @@ public class AccountManager {
                 URI.create("https://discordapp.com/api/oauth2/authorize"),
                 URI.create("https://discordapp.com/api/oauth2/token"),
                 new Duration(1, 0, 3600) /* default expiration time in case the server doesn't return any */);
-
-        String clientId = ApplicationUtil.getApplicationId(FredBoat.jdaBot);
         
         OAuth2ClientCredentials credentials = new BasicOAuth2ClientCredentials(
                 clientId, secret);

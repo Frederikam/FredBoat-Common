@@ -2,7 +2,6 @@ package fredboat.common.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import fredboat.FredBoat;
 import fredboat.common.db.entities.GuildConfig;
 import fredboat.common.db.entities.TCConfig;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import net.dv8tion.jda.JDA;
 import net.dv8tion.jda.entities.Guild;
 import net.dv8tion.jda.entities.TextChannel;
 import org.hibernate.jpa.HibernatePersistenceProvider;
@@ -44,13 +44,16 @@ public class DatabaseManager {
         emfb.afterPropertiesSet();
 
         emf = emfb.getObject();
+    }
+    
+    public static void initBotEntities(JDA jda){
         EntityManager em = getEntityManager();
 
         em.getTransaction().begin();
 
-        System.out.println(FredBoat.jdaBot.getGuilds());
+        System.out.println(jda.getGuilds());
 
-        for (Guild guild : FredBoat.jdaBot.getGuilds()) {
+        for (Guild guild : jda.getGuilds()) {
             GuildConfig gc = em.find(GuildConfig.class, Long.parseLong(guild.getId()));
             if (gc == null) {
                 System.err.println("NEW");
