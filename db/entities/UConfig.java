@@ -13,6 +13,7 @@ public class UConfig {
     private String bearer;
     private String refresh;
     private String webtoken;
+    private long bearerExpiration; //Unix epoch milliseconds
 
     public String getBearer() {
         return bearer;
@@ -30,20 +31,33 @@ public class UConfig {
         return webtoken;
     }
 
-    public void setBearer(String bearer) {
+    public long getBearerExpiration() {
+        return bearerExpiration;
+    }
+
+    public UConfig setBearer(String bearer) {
         this.bearer = bearer;
+        return this;
     }
 
-    public void setRefresh(String refresh) {
+    public UConfig setRefresh(String refresh) {
         this.refresh = refresh;
+        return this;
     }
 
-    public void setUserId(long userId) {
+    public UConfig setUserId(long userId) {
         this.userId = userId;
+        return this;
     }
 
-    public void setWebtoken(String webtoken) {
+    public UConfig setWebtoken(String webtoken) {
         this.webtoken = webtoken;
+        return this;
+    }
+
+    public UConfig setBearerExpiration(long bearerExpiration) {
+        this.bearerExpiration = bearerExpiration;
+        return this;
     }
 
 }
