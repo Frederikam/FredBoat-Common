@@ -2,9 +2,10 @@ package fredboat.common.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import fredboat.common.db.entities.GuildConfig;
-import fredboat.common.db.entities.TCConfig;
+import fredboat.common.db.entities.*;
+import fredboat.common.Crypto;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,8 +46,8 @@ public class DatabaseManager {
 
         emf = emfb.getObject();
     }
-    
-    public static void initBotEntities(JDA jda){
+
+    public static void initBotEntities(JDA jda) {
         EntityManager em = getEntityManager();
 
         em.getTransaction().begin();
@@ -93,62 +94,92 @@ public class DatabaseManager {
 
         return null;
     }
+    
+    public static UConfig getUConfig(long id) {
+        EntityManager em = DatabaseManager.getEntityManager();
+        
+        return em.find(UConfig.class, id);
+    }
+
+    public static UConfig getUConfigFromToken(String token) {
+        EntityManager em = DatabaseManager.getEntityManager();
+        List list = em.createQuery("SELECT uc FROM user_config uc WHERE uc.token = :token").setParameter("token", Crypto.hash(token)).getResultList();
+
+        if (list.isEmpty()) {
+            return null;
+        }
+
+        return (UConfig) list.get(0);
+    }
 
     public static void persistGuildConfig(GuildConfig gc, boolean commit) {
         EntityManager em = getEntityManager();
         if (commit) {
             em.getTransaction().begin();
         }
-        
-        em.persist(gc);
+
+        em.merge(gc);
         GUILD_CONFIGS.put(Long.toString(gc.getGuildId()), gc);
-        
+
         if (commit) {
             em.getTransaction().commit();
         }
     }
-    
+
     public static void persistTextChannelConfig(TCConfig tcc, boolean commit) {
         EntityManager em = getEntityManager();
         if (commit) {
             em.getTransaction().begin();
         }
-        
-        em.persist(tcc);
+
+        em.merge(tcc);
         tcc.getGuildConfiguration().addTextChannel(tcc);
-        
+
         if (commit) {
             em.getTransaction().commit();
         }
     }
-    
-    public static void remove(GuildConfig gc, boolean commit){
+
+    public static void mergeUserConfig(UConfig config, boolean commit) {
         EntityManager em = getEntityManager();
         if (commit) {
             em.getTransaction().begin();
         }
-        
+
+        em.merge(config);
+
+        if (commit) {
+            em.getTransaction().commit();
+        }
+    }
+
+    public static void remove(GuildConfig gc, boolean commit) {
+        EntityManager em = getEntityManager();
+        if (commit) {
+            em.getTransaction().begin();
+        }
+
         em.remove(gc);
         GUILD_CONFIGS.remove(Long.toString(gc.getGuildId()));
-        for(TCConfig tcc : gc.getTextChannels()){
+        for (TCConfig tcc : gc.getTextChannels()) {
             gc.removeTextChannel(tcc);
             em.remove(tcc);
         }
-        
+
         if (commit) {
             em.getTransaction().commit();
         }
     }
-    
-    public static void remove(TCConfig tcc, boolean commit){
+
+    public static void remove(TCConfig tcc, boolean commit) {
         EntityManager em = getEntityManager();
         if (commit) {
             em.getTransaction().begin();
         }
-        
+
         em.remove(tcc);
         tcc.getGuildConfiguration().removeTextChannel(tcc);
-        
+
         if (commit) {
             em.getTransaction().commit();
         }
