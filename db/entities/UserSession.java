@@ -8,8 +8,8 @@ import javax.persistence.Table;
 @Table(name = "user_session")
 public class UserSession {
 
-    @Id
     private long userId;
+    @Id
     private String token;
 
     public UserSession(long userId, String token) {
