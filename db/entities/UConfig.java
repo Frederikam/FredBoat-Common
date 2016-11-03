@@ -12,7 +12,6 @@ public class UConfig {
     private long userId;
     private String bearer;
     private String refresh;
-    private String webtoken;
     private long bearerExpiration; //Unix epoch milliseconds
 
     public String getBearer() {
@@ -25,10 +24,6 @@ public class UConfig {
 
     public long getUserId() {
         return userId;
-    }
-
-    public String getWebtoken() {
-        return webtoken;
     }
 
     public long getBearerExpiration() {
@@ -47,11 +42,6 @@ public class UConfig {
 
     public UConfig setUserId(long userId) {
         this.userId = userId;
-        return this;
-    }
-
-    public UConfig setWebtoken(String webtoken) {
-        this.webtoken = webtoken;
         return this;
     }
 
