@@ -101,17 +101,6 @@ public class DatabaseManager {
         return em.find(UConfig.class, id);
     }
 
-    public static UConfig getUConfigFromToken(String token) {
-        EntityManager em = DatabaseManager.getEntityManager();
-        List list = em.createQuery("SELECT uc FROM user_config uc WHERE uc.token = :token").setParameter("token", Crypto.hash(token)).getResultList();
-
-        if (list.isEmpty()) {
-            return null;
-        }
-
-        return (UConfig) list.get(0);
-    }
-
     public static void persistGuildConfig(GuildConfig gc, boolean commit) {
         EntityManager em = getEntityManager();
         if (commit) {
